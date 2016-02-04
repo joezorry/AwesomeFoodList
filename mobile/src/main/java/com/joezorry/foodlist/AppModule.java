@@ -20,12 +20,4 @@ public class AppModule {
             .baseUrl("BASE_URL")
             .build();
     }
-
-//
-//    @Singleton
-//    @Provides
-//    public OrmaDatabase provideOrmaDatabase(Context context) {
-//        return OrmaDatabase.builder(context)
-//                           .build();
-//    }
 }

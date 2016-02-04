@@ -2,8 +2,6 @@ package com.joezorry.foodlist;
 
 import android.app.Application;
 
-import com.joezorry.foodlist.awesomefoodlist.DaggerAppComponent;
-
 public class FoodListApplication extends Application {
 
     private AppComponent mAppComponent;

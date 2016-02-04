@@ -1,5 +1,9 @@
 package com.joezorry.foodlist;
 
+import android.content.Context;
+
+import com.joezorry.foodlist.models.OrmaDatabase;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -19,5 +23,13 @@ public class AppModule {
             .addConverterFactory(JacksonConverterFactory.create())
             .baseUrl("BASE_URL")
             .build();
+    }
+
+
+    @Singleton
+    @Provides
+    public OrmaDatabase provideOrmaDatabase(Context context) {
+        return OrmaDatabase.builder(context)
+                           .build();
     }
 }

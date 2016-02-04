@@ -1,6 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
+Properties props = new Properties()
+props.load(new FileInputStream(file(project.property("auth_token.properties"))))
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -17,6 +20,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "AUTH_TOKEN", props.getProperty("auth_token")
+        }
+        debug {
+            buildConfigField "String", "AUTH_TOKEN", props.getProperty("auth_token")
         }
     }
 }

@@ -25,8 +25,8 @@ public class AppModule {
     @Provides
     @Singleton
     Retrofit provideRetrofit() {
-        OkHttpClient httpClient = new OkHttpClient();
-        httpClient.networkInterceptors().add(new Interceptor() {
+        final OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(
+            new Interceptor() {
             @Override
             public Response intercept(final Chain chain) throws IOException {
                 final Request request =
@@ -38,11 +38,11 @@ public class AppModule {
                          .build();
                 return chain.proceed(request);
             }
-        });
+        }).build();
 
         return new Retrofit.Builder()
             .addConverterFactory(JacksonConverterFactory.create())
-            .baseUrl("https://api.lifesum.com/icebox/v1/foods/en/se/Orange")
+            .baseUrl("https://api.lifesum.com/")
             .client(httpClient)
         .build();
     }
@@ -50,7 +50,7 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public OrmaDatabase provideOrmaDatabase(Context context) {
+    public OrmaDatabase provideOrmaDatabase(final Context context) {
         return OrmaDatabase.builder(context)
                            .build();
     }

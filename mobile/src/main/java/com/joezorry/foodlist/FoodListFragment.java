@@ -12,13 +12,17 @@ import android.view.ViewGroup;
 import com.joezorry.foodlist.models.Food;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FoodListFragment extends Fragment {
+
+    private static final String TAG = "FoodListFragment";
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String ARG_FOOD_LIST = "food_list";
 
     private RecyclerView mRecyclerView;
+    private FoodListAdapter mFoodListAdapter;
 
     public static FoodListFragment newInstance(final int sectionNumber) {
         final FoodListFragment fragment = new FoodListFragment();
@@ -26,6 +30,11 @@ public class FoodListFragment extends Fragment {
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -41,13 +50,12 @@ public class FoodListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        final ArrayList<Food> foodArrayList = new ArrayList<>();
-        Food food = new Food();
-        food.title = "orange";
-        foodArrayList.add(food);
-
+        mFoodListAdapter = new FoodListAdapter(new ArrayList<Food>());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(new FoodListAdapter(foodArrayList));
+        mRecyclerView.setAdapter(mFoodListAdapter);
+    }
+
+    public void updateFoodList(final List<Food> foodList) {
+        mFoodListAdapter.updateFoodList(foodList);
     }
 }

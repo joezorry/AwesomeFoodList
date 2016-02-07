@@ -20,7 +20,16 @@ import retrofit2.Retrofit;
 @Module
 public class AppModule {
 
-    public AppModule() {}
+    private final Context mContext;
+
+    public AppModule(final Context context) {
+        mContext = context;
+    }
+
+    @Provides
+    public Context provideContext() {
+        return mContext;
+    }
 
     @Provides
     @Singleton
@@ -50,8 +59,8 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public OrmaDatabase provideOrmaDatabase(final Context context) {
-        return OrmaDatabase.builder(context)
+    public OrmaDatabase provideOrmaDatabase() {
+        return OrmaDatabase.builder(mContext)
                            .build();
     }
 }

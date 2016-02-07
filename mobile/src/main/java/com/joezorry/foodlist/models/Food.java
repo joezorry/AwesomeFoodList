@@ -1,10 +1,10 @@
 
 package com.joezorry.foodlist.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.gfx.android.orma.annotation.Column;
-import com.github.gfx.android.orma.annotation.PrimaryKey;
 import com.github.gfx.android.orma.annotation.Table;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,7 +23,7 @@ public class Food {
     @JsonProperty("fiber")
     private double fiber;
 
-    @PrimaryKey
+    @Column(indexed = true)
     @JsonProperty("id")
     public int id;
 
@@ -100,6 +100,10 @@ public class Food {
 
     @JsonProperty("showmeasurement")
     private int showmeasurement;
+
+    @Column
+    @JsonIgnore
+    public boolean isFavorite;
 
     public int getCategoryid() {
         return categoryid;
@@ -215,5 +219,13 @@ public class Food {
 
     public int getShowmeasurement() {
         return showmeasurement;
+    }
+
+    public boolean getIsFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(final boolean favorite) {
+        isFavorite = favorite;
     }
 }

@@ -11,7 +11,7 @@ public class FoodListApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mAppComponent = DaggerAppComponent.builder()
-                                          .appModule(new AppModule())
+                                          .appModule(new AppModule(this))
                                           .build();
     }
 

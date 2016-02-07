@@ -3,6 +3,7 @@ package com.joezorry.foodlist;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -140,25 +141,31 @@ public class MainActivity extends AppCompatActivity implements FavoritedListener
 
         if (searchView != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            final SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextChange(final String newText) {
-                    Log.i("onQueryTextChange", newText);
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextSubmit(final String query) {
-                    Log.i("onQueryTextSubmit", query);
-                    doSearch(query);
-                    return true;
-                }
-            };
-
+            final SearchView.OnQueryTextListener queryTextListener = createOnQueryTextListener();
             searchView.setOnQueryTextListener(queryTextListener);
         }
 
         return true;
+    }
+
+    @NonNull
+    private SearchView.OnQueryTextListener createOnQueryTextListener() {
+        return new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextChange(final String newText) {
+                        //Really crude search, could benefit from RxJava
+                        if (newText.length() > 3) {
+                            doSearch(newText);
+                        }
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextSubmit(final String query) {
+                        doSearch(query);
+                        return true;
+                    }
+                };
     }
 
     @Override
@@ -179,8 +186,8 @@ public class MainActivity extends AppCompatActivity implements FavoritedListener
 
         public SectionsPagerAdapter(final FragmentManager fm, final FavoritedListener favoritedListener) {
             super(fm);
-            mFoodListSearch = FoodListFragment.newInstance(1);
-            mFoodListFavorite = FoodListFragment.newInstance(2);
+            mFoodListSearch = FoodListFragment.newInstance();
+            mFoodListFavorite = FoodListFragment.newInstance();
             mFoodListSearch.setFavoriteListener(favoritedListener);
             mFoodListFavorite.setFavoriteListener(favoritedListener);
         }
@@ -206,9 +213,9 @@ public class MainActivity extends AppCompatActivity implements FavoritedListener
         public CharSequence getPageTitle(final int position) {
             switch (position) {
                 case SEARCH_FRAGMENT_POSITION:
-                    return "SECTION 1";
+                    return getString(R.string.search_results_tab);
                 case FAVORITES_FRAGMENT_POSITION:
-                    return "SECTION 2";
+                    return getString(R.string.favorites);
             }
             return null;
         }

@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.joezorry.foodlist.models.Food;
 import com.joezorry.foodlist.models.OrmaDatabase;
@@ -23,24 +24,16 @@ import javax.inject.Inject;
 
 public class FoodListFragment extends Fragment implements FoodListAdapter.FoodStarClickListener {
 
-    private static final String TAG = "FoodListFragment";
-
-    private static final String ARG_SECTION_NUMBER = "section_number";
-    private static final String ARG_FOOD_LIST = "food_list";
-
     private RecyclerView mRecyclerView;
     private FoodListAdapter mFoodListAdapter;
 
     @Inject
     OrmaDatabase mOrmaDatabase;
     private FavoritedListener mFavoritedListener;
+    private TextView mNoSearchResult;
 
-    public static FoodListFragment newInstance(final int sectionNumber) {
-        final FoodListFragment fragment = new FoodListFragment();
-        final Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
+    public static FoodListFragment newInstance() {
+        return new FoodListFragment();
     }
 
     @Override
@@ -56,6 +49,7 @@ public class FoodListFragment extends Fragment implements FoodListAdapter.FoodSt
         final Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.food_list_recycler_view);
+        mNoSearchResult = (TextView) rootView.findViewById(R.id.food_list_no_search_text);
 
         mFoodListAdapter = new FoodListAdapter(new ArrayList<Food>(), this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -74,8 +68,11 @@ public class FoodListFragment extends Fragment implements FoodListAdapter.FoodSt
     }
 
     public void updateFoodList(@Nullable final List<Food> foodList) {
-        if (foodList != null) {
+        if (foodList != null && foodList.size() > 0) {
             mFoodListAdapter.updateFoodList(foodList);
+            mNoSearchResult.setVisibility(View.GONE);
+        } else {
+            mNoSearchResult.setVisibility(View.VISIBLE);
         }
     }
 
@@ -94,32 +91,35 @@ public class FoodListFragment extends Fragment implements FoodListAdapter.FoodSt
             @Override
             public void run() {
                 final boolean alreadyExists = doesFoodAlreadyExists(food);
-
-                if (!alreadyExists && isChecked) {
-                    food.setFavorite(true);
-                    mOrmaDatabase.insertIntoFood(food);
-
-                }
-
-                if (!isChecked && alreadyExists) {
-                    food.setFavorite(false);
-                    mOrmaDatabase.deleteFromFood().idEq(food.getId()).execute();
-                }
-
+                addToDb(alreadyExists, isChecked, food);
+                deleteFromDb(alreadyExists, isChecked, food);
                 handler.sendEmptyMessage(0);
             }
         }).start();
     }
 
+    private void addToDb(final boolean alreadyExists, final boolean isChecked, final Food food) {
+        if (!alreadyExists && isChecked) {
+            food.setFavorite(true);
+            mOrmaDatabase.insertIntoFood(food);
+        }
+    }
+
+    private void deleteFromDb(final boolean alreadyExists, final boolean isChecked, final Food food) {
+        if (!isChecked && alreadyExists) {
+            food.setFavorite(false);
+            mOrmaDatabase.deleteFromFood().idEq(food.getId()).execute();
+        }
+    }
+
     private boolean doesFoodAlreadyExists(final Food food) {
-        boolean alreadyExists = false;
         final List<Food> foods = mOrmaDatabase.relationOfFood().orderByTitleAsc().selector().toList();
         for (int i = 0; i < foods.size(); i++) {
             final Food cachedFood = foods.get(i);
             if (cachedFood.getId() == food.getId()) {
-                alreadyExists = true;
+                return true;
             }
         }
-        return alreadyExists;
+        return false;
     }
 }

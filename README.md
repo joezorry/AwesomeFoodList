@@ -15,3 +15,7 @@ You need an API key from Lifesum. You paste that API key into the ```auth_token.
 
 When that is done, the app should be search-able and you can save your favorites into the internal database 
 for offline viewing.
+
+### Unlicense
+
+This code is distrubuted with UNLICENSE.

@@ -34,7 +34,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.FoodVi
     @Override
     public void onBindViewHolder(final FoodViewHolder holder, final int position) {
         holder.mFoodTitleTextView.setText(mFoods.get(position).getTitle());
-        holder.mProteinTextView.setText(mFoods.get(position).getProtein() + " g");
+        holder.mProteinTextView.setText(String.valueOf(mFoods.get(position).getProtein()));
         holder.mStar.setChecked(mFoods.get(position).getIsFavorite());
     }
 

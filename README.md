@@ -18,4 +18,4 @@ for offline viewing.
 
 ### Unlicense
 
-This code is distrubuted with UNLICENSE.
+This code is distributed with UNLICENSE.
